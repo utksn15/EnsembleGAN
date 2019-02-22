@@ -66,10 +66,10 @@ def generator1(z):
 
 def generator2(z):
 	with tf.variable_scope("G2"):
-	    G2_W1 = tf.Variable(xavier_init([100, 100]))
-        G2_b1 = tf.Variable(tf.zeros(shape=[100]))
+	    G2_W1 = tf.Variable(xavier_init([100, 200]))
+        G2_b1 = tf.Variable(tf.zeros(shape=[200]))
 
-        G2_W2 = tf.Variable(xavier_init([100, 784]))
+        G2_W2 = tf.Variable(xavier_init([200, 784]))
         G2_b2 = tf.Variable(tf.zeros(shape=[784]))
 
         theta_G2 = [G2_W1, G2_W2, G2_b1, G2_b2]
@@ -95,11 +95,12 @@ def plot(samples):
     return fig
 
 G_sample1 = generator1(Z)
-G_sample2 = generator2(Z)
+#G_sample2 = generator2(Z)
+
 
 t_vars = tf.trainable_variables()
 g1_vars = [var for var in t_vars if 'G1' in var.name]
-g2_vars = [var for var in t_vars if 'G2' in var.name]
+#g2_vars = [var for var in t_vars if 'G2' in var.name]
 d_vars = [var for var in t_vars if 'D' in var.name]
 print ([x.name for x in t_vars])
 
@@ -107,29 +108,29 @@ minibatch_size = 128
 Z_dim = 100
 
 saver1 = tf.train.Saver(g1_vars)
-saver2 = tf.train.Saver(g2_vars)
+#saver2 = tf.train.Saver(g2_vars)
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-load(saver2,sess,'/Users/archana/Desktop/BTP/checkpoints7/')
-load(saver1,sess,'/Users/archana/Desktop/BTP/checkpoints6/')
+load(saver1,sess,'/Users/archana/Desktop/BTP/out12/')
+#load(saver2,sess,'/Users/archana/Desktop/BTP/out13/')
 
-if not os.path.exists('out8/'):
-    os.makedirs('out8/')
+if not os.path.exists('out14/'):
+    os.makedirs('out14/')
 
 i = 0
 for it in range(1000000):
     if it % 1000 == 0:
     	p=np.random.random_sample()
-    	if (p>0.5):
-    		G_sample = G_sample1
-    	else:
-    		G_sample = G_sample2
+    	#if (p>0.5):
+    	G_sample = G_sample1
+    	#else:
+    		#G_sample = G_sample2
 
         samples = sess.run(G_sample, feed_dict={Z: sample_Z(16, Z_dim)})
 
         fig = plot(samples)
-        plt.savefig('out8/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
+        plt.savefig('out14/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
         i += 1
         plt.close(fig)
