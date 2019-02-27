@@ -37,14 +37,17 @@ def discriminator(x):
         return D_prob, D_logit
 
 def load(saver, sess, checkpoint_dir):
-    print(" [*] Reading checkpoints...", x)
+    print(" [*] Reading checkpoints...")
     ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
     if ckpt and ckpt.model_checkpoint_path:
         ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
         saver.restore(sess, os.path.join(checkpoint_dir, ckpt_name))
+        print ("Succesfully loaded")
         return True
     else:
+    	print ("Loading Unsuccessful")
         return False
+
 
 def sample_Z(m, n):
     return np.random.uniform(-1., 1., size=[m, n])
@@ -94,27 +97,28 @@ def plot(samples):
 
     return fig
 
-G_sample1 = generator1(Z)
-#G_sample2 = generator2(Z)
+#G_sample1 = generator1(Z)
+G_sample2 = generator2(Z)
 
 
 t_vars = tf.trainable_variables()
 g1_vars = [var for var in t_vars if 'G1' in var.name]
-#g2_vars = [var for var in t_vars if 'G2' in var.name]
+g2_vars = [var for var in t_vars if 'G2' in var.name]
 d_vars = [var for var in t_vars if 'D' in var.name]
 print ([x.name for x in t_vars])
 
 minibatch_size = 128
 Z_dim = 100
 
-saver1 = tf.train.Saver(g1_vars)
-#saver2 = tf.train.Saver(g2_vars)
+#saver1 = tf.train.Saver(g1_vars)
+saver2 = tf.train.Saver(g2_vars)
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
+#sess.run()
 
-load(saver1,sess,'/Users/archana/Desktop/BTP/out12/')
-#load(saver2,sess,'/Users/archana/Desktop/BTP/out13/')
+#load(saver1,sess,'/Users/archana/Desktop/BTP/Codes/out12/')
+load(saver2,sess,'/Users/archana/Desktop/BTP/Codes/out13/')
 
 if not os.path.exists('out14/'):
     os.makedirs('out14/')
@@ -124,7 +128,7 @@ for it in range(1000000):
     if it % 1000 == 0:
     	p=np.random.random_sample()
     	#if (p>0.5):
-    	G_sample = G_sample1
+    	G_sample = G_sample2
     	#else:
     		#G_sample = G_sample2
 
